@@ -35,13 +35,12 @@ def lambda_handler(event, context):
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode('utf-8'))
 
+            # Note: CORS headers are handled by Lambda Function URL config
+            # Do NOT add them here to avoid duplicate headers
             return {
                 'statusCode': 200,
                 'headers': {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-                    'Access-Control-Allow-Headers': 'Content-Type'
+                    'Content-Type': 'application/json'
                 },
                 'body': json.dumps(data)
             }
@@ -49,8 +48,7 @@ def lambda_handler(event, context):
         return {
             'statusCode': 500,
             'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Content-Type': 'application/json'
             },
             'body': json.dumps({'error': str(e)})
         }
