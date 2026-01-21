@@ -357,14 +357,10 @@
                     <h2 class="card-title">Live Statistics</h2>
                 </div>
                 <div class="card-body">
-                    <div class="stats-grid">
+                    <div class="stats-grid" style="grid-template-columns: 1fr;">
                         <div class="stat-item">
                             <div class="stat-value" id="total-tasks">-</div>
                             <div class="stat-label">Running Tasks</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="total-services">-</div>
-                            <div class="stat-label">Services</div>
                         </div>
                     </div>
                     <div style="margin-top: 20px; text-align: center;">
@@ -487,10 +483,6 @@ CLUSTER_NAME = <span class="string">"demo-cluster"</span>
                 if (data && data.length > 0) {
                     // Update stats from latest record
                     document.getElementById('total-tasks').textContent = data[0].total_task_number;
-
-                    // Count unique clusters (services approximation)
-                    const uniqueClusters = [...new Set(data.map(r => r.cluster_name))];
-                    document.getElementById('total-services').textContent = uniqueClusters.length;
 
                     // Update table
                     const tbody = document.getElementById('records-table');
