@@ -9,23 +9,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Claude Desktop inspired colors */
-            --bg-primary: #191919;
-            --bg-secondary: #232323;
-            --bg-tertiary: #2d2d2d;
-            --bg-code: #1a1a1a;
-            --bg-hover: #363636;
-            --text-primary: #ececec;
-            --text-secondary: #9a9a9a;
-            --text-muted: #666666;
+            /* Claude Desktop cream/beige style */
+            --bg-primary: #f5f3ef;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #faf9f6;
+            --bg-code: #f8f6f2;
+            --bg-hover: #f0ede7;
+            --bg-claude: #f3f1ea;
+            --text-primary: #2d2a26;
+            --text-secondary: #6b6560;
+            --text-muted: #9a958e;
             --accent-orange: #da7756;
             --accent-orange-hover: #c46a4b;
-            --accent-blue: #6b9ece;
-            --accent-green: #5fb760;
-            --accent-purple: #a78bda;
-            --accent-cream: #e8e4db;
-            --border-color: #333333;
-            --shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+            --accent-blue: #5a8fc7;
+            --accent-green: #4a9c5d;
+            --accent-purple: #8b6fb0;
+            --border-color: #e5e2dc;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
         * {
@@ -63,7 +63,7 @@
         .logo-icon {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+            background: var(--accent-orange);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -71,9 +71,10 @@
         }
 
         .logo-icon svg {
-            width: 28px;
-            height: 28px;
-            fill: white;
+            width: 26px;
+            height: 26px;
+            stroke: white;
+            fill: none;
         }
 
         h1 {
@@ -125,9 +126,9 @@
             justify-content: center;
         }
 
-        .card-header-icon.orange { background: rgba(224, 122, 58, 0.15); }
-        .card-header-icon.blue { background: rgba(91, 155, 213, 0.15); }
-        .card-header-icon.green { background: rgba(123, 196, 127, 0.15); }
+        .card-header-icon.orange { background: rgba(218, 119, 86, 0.12); }
+        .card-header-icon.blue { background: rgba(90, 143, 199, 0.12); }
+        .card-header-icon.green { background: rgba(74, 156, 93, 0.12); }
 
         .card-header-icon svg {
             width: 18px;
@@ -154,10 +155,11 @@
         }
 
         .stat-item {
-            background: var(--bg-tertiary);
-            padding: 16px;
+            background: var(--bg-claude);
+            padding: 20px;
             border-radius: 12px;
             text-align: center;
+            border: 1px solid var(--border-color);
         }
 
         .stat-value {
@@ -207,10 +209,11 @@
             color: var(--text-primary);
         }
 
-        .code-content .keyword { color: var(--accent-purple); }
-        .code-content .string { color: var(--accent-green); }
-        .code-content .function { color: var(--accent-blue); }
-        .code-content .comment { color: var(--text-muted); }
+        .code-content .keyword { color: #8b6fb0; }
+        .code-content .string { color: #3a8a4e; }
+        .code-content .function { color: #4a7faf; }
+        .code-content .comment { color: #9a958e; }
+        .code-content .number { color: #c46a4b; }
 
         table {
             width: 100%;
@@ -254,7 +257,7 @@
         }
 
         .status-badge.active {
-            background: rgba(123, 196, 127, 0.15);
+            background: rgba(74, 156, 93, 0.12);
             color: var(--accent-green);
         }
 
@@ -307,8 +310,9 @@
         .timestamp {
             margin-top: 20px;
             padding: 12px 16px;
-            background: var(--bg-tertiary);
+            background: var(--bg-claude);
             border-radius: 8px;
+            border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
