@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECS Task Counter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #333333;
+            --bg-code: #1e1e1e;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --text-muted: #6b6b6b;
+            --accent-orange: #e07a3a;
+            --accent-orange-hover: #c96a2d;
+            --accent-blue: #5b9bd5;
+            --accent-green: #7bc47f;
+            --accent-purple: #a78bda;
+            --border-color: #3a3a3a;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-header-icon.orange { background: rgba(224, 122, 58, 0.15); }
+        .card-header-icon.blue { background: rgba(91, 155, 213, 0.15); }
+        .card-header-icon.green { background: rgba(123, 196, 127, 0.15); }
+
+        .card-header-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .card-header-icon.orange svg { stroke: var(--accent-orange); }
+        .card-header-icon.blue svg { stroke: var(--accent-blue); }
+        .card-header-icon.green svg { stroke: var(--accent-green); }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-item {
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .code-block {
+            background: var(--bg-code);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: var(--bg-tertiary);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-filename {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .code-content {
+            padding: 16px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .code-content pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        .code-content .keyword { color: var(--accent-purple); }
+        .code-content .string { color: var(--accent-green); }
+        .code-content .function { color: var(--accent-blue); }
+        .code-content .comment { color: var(--text-muted); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background: rgba(123, 196, 127, 0.15);
+            color: var(--accent-green);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .refresh-btn {
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn:hover {
+            background: var(--accent-orange-hover);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .refresh-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .timestamp {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent-orange);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </div>
+                <h1>ECS Task Counter</h1>
+            </div>
+            <p class="subtitle">AWS Lambda function to monitor ECS cluster tasks with Supabase integration</p>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon orange">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Live Statistics</h2>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-tasks">-</div>
+                            <div class="stat-label">Running Tasks</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-services">-</div>
+                            <div class="stat-label">Services</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="refresh-btn" id="refresh-btn" onclick="fetchData()">
+                            <svg id="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 4v6h-6"/>
+                                <path d="M1 20v-6h6"/>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                            Refresh Data
+                        </button>
+                    </div>
+                    <p class="timestamp" id="last-updated"></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Lambda Function</h2>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-filename">lambda_function.py</span>
+                            <span class="status-badge active">
+                                <span class="status-dot"></span>
+                                Deployed
+                            </span>
+                        </div>
+                        <div class="code-content">
+                            <pre><span class="keyword">import</span> boto3
+<span class="keyword">import</span> json
+<span class="keyword">import</span> urllib.request
+
+<span class="comment"># ECS configuration</span>
+CLUSTER_ARN = <span class="string">"arn:aws:ecs:us-east-1:..."</span>
+CLUSTER_NAME = <span class="string">"demo-cluster"</span>
+
+<span class="keyword">def</span> <span class="function">lambda_handler</span>(event, context):
+    ecs = boto3.<span class="function">client</span>(<span class="string">'ecs'</span>)
+
+    <span class="comment"># List all services</span>
+    service_arns = []
+    paginator = ecs.<span class="function">get_paginator</span>(<span class="string">'list_services'</span>)
+    <span class="keyword">for</span> page <span class="keyword">in</span> paginator.<span class="function">paginate</span>(cluster=CLUSTER_ARN):
+        service_arns.<span class="function">extend</span>(page[<span class="string">'serviceArns'</span>])
+
+    <span class="comment"># Count running tasks</span>
+    total_running_tasks = <span class="number">0</span>
+    <span class="keyword">for</span> batch <span class="keyword">in</span> <span class="function">chunks</span>(service_arns, <span class="number">10</span>):
+        response = ecs.<span class="function">describe_services</span>(...)
+        <span class="keyword">for</span> service <span class="keyword">in</span> response[<span class="string">'services'</span>]:
+            total_running_tasks += service[<span class="string">'runningCount'</span>]
+
+    <span class="comment"># Write to Supabase</span>
+    <span class="function">write_to_supabase</span>(total_running_tasks)
+
+    <span class="keyword">return</span> {<span class="string">'statusCode'</span>: <span class="number">200</span>, ...}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="card-header-icon green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                        </svg>
+                    </div>
+                    <h2 class="card-title">Recent Records (Supabase)</h2>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Cluster Name</th>
+                                <th>Total Tasks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="records-table">
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: var(--text-muted);">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Built with AWS Lambda & Supabase | <a href="https://github.com/Joseph19820124/ecs-task-counter">View on GitHub</a>
+        </footer>
+    </div>
+
+    <script>
+        // API endpoint (Lambda Function URL - credentials are secured server-side)
+        const API_URL = 'https://p6dyc4rgx767lm5gqysziqhw2a0kjknb.lambda-url.us-east-1.on.aws/';
+
+        async function fetchData() {
+            const btn = document.getElementById('refresh-btn');
+            const icon = document.getElementById('refresh-icon');
+
+            btn.disabled = true;
+            icon.classList.add('loading');
+
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    // Update stats from latest record
+                    document.getElementById('total-tasks').textContent = data[0].total_task_number;
+
+                    // Count unique clusters (services approximation)
+                    const uniqueClusters = [...new Set(data.map(r => r.cluster_name))];
+                    document.getElementById('total-services').textContent = uniqueClusters.length;
+
+                    // Update table
+                    const tbody = document.getElementById('records-table');
+                    tbody.innerHTML = data.map(record => `
+                        <tr>
+                            <td>${formatDate(record.created_at)}</td>
+                            <td>${truncate(record.cluster_name, 40)}</td>
+                            <td><strong>${record.total_task_number}</strong></td>
+                        </tr>
+                    `).join('');
+
+                    // Update timestamp
+                    document.getElementById('last-updated').textContent =
+                        `Last updated: ${new Date().toLocaleString()}`;
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                btn.disabled = false;
+                icon.classList.remove('loading');
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function truncate(str, length) {
+            if (str.length <= length) return str;
+            return str.substring(0, length) + '...';
+        }
+
+        // Fetch data on page load
+        fetchData();
+    </script>
+</body>
+</html>
