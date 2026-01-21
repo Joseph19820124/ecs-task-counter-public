@@ -399,7 +399,7 @@
                                 <path d="M1 20v-6h6"/>
                                 <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
                             </svg>
-                            Refresh Data
+                            Get Latest Data
                         </button>
                     </div>
                     <div class="timestamp" id="last-updated" style="display: none;">
@@ -407,7 +407,7 @@
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
-                        <span class="timestamp-text">Last updated: <span class="timestamp-value" id="update-time"></span></span>
+                        <span class="timestamp-text">Last data in DB: <span class="timestamp-value" id="update-time"></span></span>
                     </div>
                 </div>
             </div>
@@ -529,9 +529,9 @@ CLUSTER_NAME = <span class="string">"demo-cluster"</span>
                         </tr>
                     `).join('');
 
-                    // Update timestamp
+                    // Update timestamp from DB
                     document.getElementById('last-updated').style.display = 'flex';
-                    document.getElementById('update-time').textContent = new Date().toLocaleString();
+                    document.getElementById('update-time').textContent = formatDate(data[0].created_at);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
